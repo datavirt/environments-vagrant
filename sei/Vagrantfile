@@ -1,0 +1,34 @@
+# Example 6
+#
+# Pulling out all the stops with cluster of seven Vagrant boxes.
+#
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+
+domain   = 'hacklab.local'
+nodes = [
+  { :hostname => 'nginx', :ip => '192.168.10.10', :box => 'centos/7', :ram => '512' },
+  { :hostname => 'app1',  :ip => '192.168.10.11', :box => 'centos/7', :ram => '512' },
+  { :hostname => 'app2',  :ip => '192.168.10.12', :box => 'centos/7', :ram => '512' },
+  { :hostname => 'solr',  :ip => '192.168.10.13', :box => 'centos/7', :ram => '512' },
+  { :hostname => 'nfs',   :ip => '192.168.10.14', :box => 'centos/7', :ram => '512' },
+  { :hostname => 'jodc',  :ip => '192.168.10.15', :box => 'centos/7', :ram => '512' },
+]
+
+Vagrant.configure("2") do |config|
+  nodes.each do |node|
+    config.vm.define node[:hostname] do |nodeconfig|
+      nodeconfig.vm.box = node[:box]
+      nodeconfig.vm.hostname = node[:hostname] + domain
+      nodeconfig.vm.network :private_network, ip: node[:ip]
+
+      memory = node[:ram] ? node[:ram] : 256;
+      nodeconfig.vm.provider :virtualbox do |vb|
+        vb.customize [
+          "modifyvm", :id,
+          "--cpuexecutioncap", "50",
+          "--memory", memory.to_s,
+        ]
+      end
+    end
+  end
+end
