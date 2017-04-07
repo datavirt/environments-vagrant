@@ -6,7 +6,7 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 domain   = '.hacklab.local'
 nodes = [
   { :hostname => 'a1',      :ip => '192.168.10.11', :box => 'centos/7',  :ram => '512' },
-  { :hostname => 'a2',      :ip => '192.168.10.12', :box => 'precise64', :ram => '512' },
+#  { :hostname => 'a2',      :ip => '192.168.10.12', :box => 'precise64', :ram => '512' },
 ]
 
 Vagrant.configure("2") do |config|
@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     puppet.vm.hostname = "server"
     puppet.vm.network :private_network, ip: "192.168.10.10"
     puppet.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", "512" ]
+      v.customize ["modifyvm", :id, "--memory", "1024" ]
       v.customize ["modifyvm", :id, "--cpus", "1" ]
     end
     puppet.vm.provision :shell, :path => "bootstrap-puppetserver.sh"
